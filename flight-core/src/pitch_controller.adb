@@ -1,7 +1,5 @@
 -- TODO: flesh out control law and start running ``gnatprove -P flight_core.gpr`
 
-with Pitch_Types; use Pitch_Types;
-
 package body Pitch_Controller
    with SPARK_Mode => On
 is

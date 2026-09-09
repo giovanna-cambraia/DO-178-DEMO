@@ -1,0 +1,24 @@
+-- Build: gprbuild -P flight_core.gpr
+-- Prove: gnatprove -P flight_core.gpr --level=2 --report=all
+
+project Flight_Core is
+
+   for Languages use ("Ada");
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Library_Name use "flight_core";
+   for Library_Dir use "lib";
+   for Library_Kind use "static";
+
+   package Compiler is
+      for Default_Switches ("Ada") use
+      ("-gnatwa",
+       "-gnatVa",
+       "-gnata");
+   end Compiler;
+
+   package Prove is
+      for Proof_Switches ("Ada") use ("--level=2", "--report=all");
+   end Prove;
+
+end Flight_Core;

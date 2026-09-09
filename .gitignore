@@ -1,8 +1,12 @@
 # C / CMake
 build/
 *.o
-*.obj
 *.exe
+/obj/
+/bin/
+/alire/
+/config/
+
 CMakeFiles/
 CMakeCache.txt
  

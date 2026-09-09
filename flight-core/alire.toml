@@ -1,0 +1,12 @@
+name = "flight_core"
+description = "''"
+version = "0.1.0-dev"
+
+authors = ["Giovanna Cambraia"]
+maintainers = ["Giovanna Cambraia <giovannacambraia8@gmail.com>"]
+maintainers-logins = ["giovanna-cambraia"]
+licenses = "MIT"
+website = "''"
+tags = []
+
+executables = ["flight_core"]
