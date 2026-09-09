@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>GPR - Ground Station</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f1115; color: #e6e6e6; margin: 0; padding: 2rem; }
+    h1 { font-size: 1.1rem; font-weight: 600; color: #9fd0ff; }
+    #status { color: #7a8390; font-size: 0.85rem; margin-bottom: 1rem; }
+    canvas { background: #14171d; border: 1px solid #262b33; border-radius: 8px; }
+    .legend { display: flex; gap: 1.5rem; margin-top: 0.75rem; font-size: 0.85rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h1>Flight Control DEMO V1</h1>
+  <div id="status">connecting…</div>
+  <canvas id="chart" width="900" height="360"></canvas>
+  <div class="legend">
+    <span><i class="swatch" style="background:#5ec8f8"></i> pitch (mdeg)</span>
+    <span><i class="swatch" style="background:#f8d95e"></i> target (mdeg)</span>
+    <span><i class="swatch" style="background:#f85e7a"></i> actuator cmd (mdeg)</span>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+
+    const MAX_POINTS = 300;
+    /** @type {{t:number,pitch:number,rate:number,target:number,cmd:number}[]} */
+    let frames = [];
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (frames.length < 2) return;
+
+      const allValues = frames.flatMap((f) => [f.pitch, f.target, f.cmd]);
+      const min = Math.min(...allValues, -1000);
+      const max = Math.max(...allValues, 1000);
+      const pad = 20;
+
+      function toXY(i, value) {
+        const x = pad + (i / (MAX_POINTS - 1)) * (canvas.width - 2 * pad);
+        const y =
+          canvas.height -
+          pad -
+          ((value - min) / (max - min || 1)) * (canvas.height - 2 * pad);
+        return [x, y];
+      }
+
+      function drawSeries(key, color) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        frames.forEach((f, i) => {
+          const [x, y] = toXY(i, f[key]);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      drawSeries("pitch", "#5ec8f8");
+      drawSeries("target", "#f8d95e");
+      drawSeries("cmd", "#f85e7a");
+    }
+
+    const ws = new WebSocket(`ws://${location.host}`);
+    ws.onopen = () => (statusEl.textContent = "connected");
+    ws.onclose = () => (statusEl.textContent = "disconnected");
+    ws.onmessage = (event) => {
+      const frame = JSON.parse(event.data);
+      frames.push(frame);
+      if (frames.length > MAX_POINTS) frames.shift();
+      statusEl.textContent = `t=${frame.t}ms  pitch=${frame.pitch}mdeg  cmd=${frame.cmd}mdeg`;
+      draw();
+    };
+  </script>
+</body>
+</html>
