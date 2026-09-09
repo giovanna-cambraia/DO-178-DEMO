@@ -1,0 +1,27 @@
+--  Build: alr exec -- gprbuild -P flight_sim.gpr
+--  Run:   ./flight_sim_driver   (or flight_sim_driver.exe on Windows)
+
+project Flight_Sim is
+
+   for Languages use ("Ada", "C");
+
+   for Source_Dirs use
+   ("hal-sim/src",
+    "hal-sim/include",
+    "flight-core/src",
+    "flight-core/include");
+
+   for Object_Dir use "obj";
+   for Main use ("main.c");
+   for Exec_Dir use ".";
+
+   package Compiler is
+      for Default_Switches ("C") use ("-Wall", "-Wextra", "-std=c99");
+      for Default_Switches ("Ada") use ("-gnatwa", "-gnatVa", "-gnata");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("C") use ("-lgnat");
+   end Linker;
+
+end Flight_Sim;

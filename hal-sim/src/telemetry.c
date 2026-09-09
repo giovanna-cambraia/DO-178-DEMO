@@ -11,7 +11,7 @@ hal_status_t telemetry_init(void)
 
 hal_status_t telemetry_emit(const telemetry_frame_t *frame)
 {
-    if (s_initialized)
+    if (!s_initialized)
     {
         return HAL_ERR_NOT_INITIALIZED;
     }

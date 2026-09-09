@@ -2,10 +2,6 @@
 build/
 *.o
 *.exe
-/obj/
-/bin/
-/alire/
-/config/
 
 CMakeFiles/
 CMakeCache.txt
@@ -25,4 +21,11 @@ dist/
 .vscode/
 .idea/
 .DS_Store
- 
+ /obj/
+/bin/
+/alire/
+/config/
+/obj/
+/bin/
+/alire/
+/config/
